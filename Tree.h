@@ -50,9 +50,6 @@ private:
         friend class Tree;
     };
 
-    // this is part of the Tree class
-    Node * head;
-
     /**
      * Helper Function for insert
      * COMPLETE!!
@@ -62,18 +59,21 @@ private:
      */
     Node * BSTInsert(Node* y, Node * head) {
         if (head == NULL) {
-            //sets the head value to the y value then sets it to be the only leaf
-            Node *a = new Node(y->key,y->value);
-            Tree::setHead(a);
-            return head;
+            head = y; //Stack error? :(
         }
 
-        if(y->value < Tree::head->value)
-            head->left = BSTInsert(head->left,y);
-        if(y->value > Tree::head->value)
-            head->right = BSTInsert(Tree::head->right,y);
-
-        printTree();
+        if(y->key < head->key)
+            if(head->left !=NULL)
+                BSTInsert(y,head->left);
+            else
+                if(head->key!=y->key)
+                    head->left = y;
+        else if(y->key >= head->key)
+            if(head->right != NULL)
+                BSTInsert(y, head->right);
+            else
+                if(head->key!=y->key)
+                    head->right =y;
         return head;
     }
 
@@ -84,22 +84,25 @@ private:
      * @param key
      * @return
      */
-    Node* binary_search(Node* node, int key)
-    {
-        /**
-         * Checking for base case if its NULL or the same information
-         */
-        if (node == NULL || node->key == key)
-            return node;
-
-        // Key is greater than root's key
-        if (node->key < key)
-            return binary_search(node->right, key);
-
-        // Key is smaller than root's key
-        return binary_search(node->left, key);
+    std::pair<bool,int> binary_tree_search(std::pair<bool,int> search_N, Node *node, int key) {
+        if(node != NULL){
+            if(key == node->key){
+                search_N.first = true;
+                search_N.second++;
+                return search_N;
+            }
+            if(key < node->key){
+                search_N.second++;
+                return binary_tree_search(search_N, node->left, key);
+            }else{
+                search_N.second++;
+                return binary_tree_search(search_N, node->right, key);
+            }
+        }else{
+            search_N.first = false;
+            return search_N;
+        }
     }
-
 
     /**
      * Helper function for height
@@ -109,18 +112,14 @@ private:
      */
     int parse_height(Node* node) {
         if (node==NULL)
-            return 0;
-        else
-        {
-            int left_depth = parse_height(node->left);
-            int right_depth = parse_height(node->right);
+            return -1;
+
+        int left_depth = parse_height(node->left);
+        int right_depth = parse_height(node->right);
 
             /* use the larger one */
-            if (left_depth > right_depth)
-                return(left_depth+1);
-            else return(right_depth+1);
-        }
-        return 0;
+        if (left_depth > right_depth) {return(left_depth+1);}
+        else {return(right_depth+1);}
     }
 
     /**
@@ -134,14 +133,15 @@ private:
     {
         if (node == NULL)
             return;
-
-        printInOrder(node->left); // Will first handle the left side of the tree
-
-        std::cout << node->value << "' "; // Will print out the value at that certain part
-
-        printInOrder(node->right); // Will handle the right hand side of the tree
-
+        else {
+            printInOrder(node->left); // Will first handle the left side of the tree
+            std::cout << node->value << "' "; // Will print out the value at that certain part
+            printInOrder(node->right); // Will handle the right hand side of the tree
+        }
     }
+
+    // this is part of the Tree class
+    Node * head;
 
 public:
 
@@ -155,13 +155,13 @@ public:
     //Prints the keys for the tree in inorder mode
     // Helper function in private section
     void printTree(){
-        printInOrder(head);
+        printInOrder(this->head);
     }
 
     //Inserts a node into the tree
     // Helper function in private section
     void insert(const int key, const int value){
-        Node * temp = createNode(key,value);
+        Node * temp = new Node(key,value);
         this->head = BSTInsert(temp,this->head);
     }
 
@@ -169,48 +169,25 @@ public:
     // Helper function in private section
     std::pair<bool,int> searchNode(int key){
 
-        bool if_found = BST_search_Helper(head, key);
-        std::pair<bool,int> creation_of_pair;
-        creation_of_pair.first = if_found;
-        creation_of_pair.second = key;
-        return creation_of_pair;
+        std::pair <bool, int> creation_pair;
+        creation_pair.first = false;
+        creation_pair.second = 0; // Default Value
+
+        return binary_tree_search(creation_pair,head,key);
     }
 
-    /**
-     * @function height
-     * COMPLETE!!!
-     * Designed to print out the information from the parse_height helper function
-     */
-    void height(){
-        std::cout << parse_height(this->head) << std::endl;
+    // Default height constructor
+    int height() {
+        return parse_height(head);
     }
 
-    /**
-     * kvp_helper
-     * add create a node with key, value and both pointers
-     * Complete!!
-     * @param key
-     * @param value
-     * @param _left
-     * @param _right
-     * @return
-     */
-    Node * kvp_helper(int key, int value,Node* _left, Node* _right){
-        Node * temp = new Node(key,value, _left,_right);
-        return temp;
+    // Good old height function that takes in the int values
+    int height(int other_trees) {
+        if(other_trees == 0)
+            return parse_height(head->left);
+        return parse_height(head->right);
     }
 
-    bool BST_search_Helper(Node * _node,int _key){
-        return _node == binary_search(_node, _key);
-    }
-
-    Node *getHead() const {
-        return head;
-    }
-
-    void setHead(Node *head) {
-        Tree::head = head;
-    }
 
 };
 

@@ -61,18 +61,19 @@ private:
      * @return
      */
     Node * BSTInsert(Node* y, Node * head) {
-
         if (head == NULL) {
             //sets the head value to the y value then sets it to be the only leaf
-            head->value = y->value;
-            head->left = head->right = NULL;
+            Node *a = new Node(y->key,y->value);
+            Tree::setHead(a);
+            return head;
         }
 
-        if(y->value < head->value)
+        if(y->value < Tree::head->value)
             head->left = BSTInsert(head->left,y);
-        if(y->value > head->value)
-            head->right = BSTInsert(head->right,y);
+        if(y->value > Tree::head->value)
+            head->right = BSTInsert(Tree::head->right,y);
 
+        printTree();
         return head;
     }
 
@@ -154,7 +155,7 @@ public:
     //Prints the keys for the tree in inorder mode
     // Helper function in private section
     void printTree(){
-        printInOrder(this->head);
+        printInOrder(head);
     }
 
     //Inserts a node into the tree
@@ -184,7 +185,6 @@ public:
         std::cout << parse_height(this->head) << std::endl;
     }
 
-
     /**
      * kvp_helper
      * add create a node with key, value and both pointers
@@ -211,8 +211,6 @@ public:
     void setHead(Node *head) {
         Tree::head = head;
     }
-
-
 
 };
 

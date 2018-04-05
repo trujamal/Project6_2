@@ -1,3 +1,9 @@
+/**
+ * @author Jamal Rasool
+ * @version 1.0
+ * @desc This main file is designed to print, and test al of the cases that are presented
+ */
+
 #include <iostream>
 #include "Tree.h"
 #include <stdlib.h>

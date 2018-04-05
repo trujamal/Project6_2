@@ -1,6 +1,10 @@
-//
-// Created by Greg LaKomski on 3/20/18.
-//
+/**
+ * @author Jamal Rasool
+ * @version 1.0
+ * @desc Created by Greg LaKomski on 3/20/18.
+ * @date 3/27/18
+ * @def This is the tree class in which handles the backend fucntion with the implemented code.
+ */
 
 #ifndef PROJECT6_2_TREE_H
 #define PROJECT6_2_TREE_H
